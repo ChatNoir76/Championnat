@@ -6,7 +6,7 @@ class Singleton(object):
 
     class __Singleton:
         def __init__(self):
-            self.__bddname = "test8.db"
+            self.__bddname = "championnat.db"
             self.__conn = sqlite3.connect(self.__bddname)
 
         def get_instance(self):

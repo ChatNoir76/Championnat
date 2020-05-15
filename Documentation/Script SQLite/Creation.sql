@@ -54,14 +54,16 @@ CREATE TABLE Match(
 -- Table: But
 ------------------------------------------------------------
 CREATE TABLE But(
-	id_but             INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT ,
-	commentaire_but    TEXT ,
-	estcsc_but         INTEGER NOT NULL ,
-	id_match           INTEGER NOT NULL ,
-	id_equipe          INTEGER NOT NULL
+	id_but                  INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT ,
+	commentaire_but         TEXT ,
+	id_joueur_assistance    INTEGER ,
+	id_joueur               INTEGER ,
+	id_match                INTEGER NOT NULL ,
+	id_equipe               INTEGER NOT NULL
 
-	,CONSTRAINT But_Match_FK FOREIGN KEY (id_match) REFERENCES Match(id_match)
-	,CONSTRAINT But_Equipe0_FK FOREIGN KEY (id_equipe) REFERENCES Equipe(id_equipe)
+	,CONSTRAINT But_Joueur_FK FOREIGN KEY (id_joueur) REFERENCES Joueur(id_joueur)
+	,CONSTRAINT But_Match0_FK FOREIGN KEY (id_match) REFERENCES Match(id_match)
+	,CONSTRAINT But_Equipe1_FK FOREIGN KEY (id_equipe) REFERENCES Equipe(id_equipe)
 );
 
 
@@ -104,21 +106,6 @@ CREATE TABLE Calendrier(
 	,CONSTRAINT Calendrier_Equipe_FK FOREIGN KEY (id_equipe) REFERENCES Equipe(id_equipe)
 	,CONSTRAINT Calendrier_Match0_FK FOREIGN KEY (id_match) REFERENCES Match(id_match)
 	,CONSTRAINT Calendrier_Equipe1_FK FOREIGN KEY (id_equipe_Exterieur) REFERENCES Equipe(id_equipe)
-);
-
-
-------------------------------------------------------------
--- Table: joueur_event
-------------------------------------------------------------
-CREATE TABLE joueur_event(
-	id_joueur               INTEGER NOT NULL ,
-	id_but                  INTEGER NOT NULL ,
-	id_joueur_assistance    INTEGER NOT NULL,
-	CONSTRAINT joueur_event_PK PRIMARY KEY (id_joueur,id_but,id_joueur_assistance)
-
-	,CONSTRAINT joueur_event_Joueur_FK FOREIGN KEY (id_joueur) REFERENCES Joueur(id_joueur)
-	,CONSTRAINT joueur_event_But0_FK FOREIGN KEY (id_but) REFERENCES But(id_but)
-	,CONSTRAINT joueur_event_Joueur1_FK FOREIGN KEY (id_joueur_assistance) REFERENCES Joueur(id_joueur)
 );
 
 

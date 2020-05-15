@@ -3,7 +3,6 @@ from model.dao.sqlite.dao_competition import DaoChampionnat
 from model.dao.sqlite.dao_goals import DaoGoals
 from model.dao.sqlite.dao_match import DaoMatch
 from model.dao.sqlite.dao_player import DaoPlayer
-from model.dao.sqlite.dao_service import DaoService
 from model.dao.sqlite.dao_team import DaoTeam
 
 
@@ -29,7 +28,3 @@ class DaoFactory(object):
     @classmethod
     def getMatch(cls):
         return DaoMatch(cls.__connexion)
-
-    @classmethod
-    def getService(cls):
-        return DaoService(cls.__connexion)

@@ -80,42 +80,48 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def set_competition_begin(self, value):
         self.__competition_begin = value
-        self.on_changed_competition_begin.emit(value)
+        if value is not None:
+            self.on_changed_competition_begin.emit(value)
 
     def get_competition(self):
         return self.__competition
 
     def set_competition(self, value):
         self.__competition = value
-        self.on_changed_competition.emit(value)
+        if value is not None:
+            self.on_changed_competition.emit(value)
 
     def get_teams(self):
         return self.__teams
 
     def set_teams(self, value):
         self.__teams = value
-        self.on_changed_teams.emit(value)
+        if value is not None:
+            self.on_changed_teams.emit(value)
 
     def get_players(self):
         return self.__players
 
     def set_players(self, value):
         self.__players = value
-        self.on_changed_players.emit(value)
+        if value is not None:
+            self.on_changed_players.emit(value)
 
     def get_current_team(self):
         return self.__current_team
 
     def set_current_team(self, value):
         self.__current_team = value
-        self.on_changed_current_team.emit(value)
+        if value is not None:
+            self.on_changed_current_team.emit(value)
 
     def get_current_player(self):
         return self.__current_player
 
     def set_current_player(self, value):
         self.__current_player = value
-        self.on_changed_current_player.emit(value)
+        if value is not None:
+            self.on_changed_current_player.emit(value)
 
     def get_current_match(self):
         return self.__current_match
@@ -163,11 +169,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.listWidget_extplayer.addItem(player.description)
             # if there are goal
             listgoal = dao.getGoals().getByMatch(o_match)
-            for goal in listgoal:
-                oteam = dao.getTeam().getById(goal.idequipe)
-                oscorer = dao.getPlayer().getById(goal.idplayer_scorer)
-                oass = dao.getPlayer().getById(goal.idplayer_ass)
-                self.__update_view_after_goals(oteam, oscorer, oass)
+            if listgoal is not None:
+                for goal in listgoal:
+                    oteam = dao.getTeam().getById(goal.idequipe)
+                    oscorer = dao.getPlayer().getById(goal.idplayer_scorer)
+                    oass = dao.getPlayer().getById(goal.idplayer_ass)
+                    self.__update_view_after_goals(oteam, oscorer, oass)
 
     def __update_view_after_goals(self, oteam, oscorer, oass):
         text = 'GOAL for {}\n\tscorer: {}\n\tass: {}\n==============='.format(
@@ -225,6 +232,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     # action after current_team modification [property]
     def __after_changed_property_current_team(self, team):
+        self.__clear_listwidget(self.listWidget_playerslist)
         # get players for the team
         if team is not None:
             self.set_players(dao.getPlayer().getByTeam(team))
@@ -246,22 +254,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.__clear_listwidget(self.listWidget_matchslist)
         if index == 1:
             matchs = dao.getMatch().getMatchPlayed(self.get_competition())
-            self.progressBar_competitionlevel.setValue(len(matchs))
+            if matchs is not None:
+                self.progressBar_competitionlevel.setValue(len(matchs))
             teams = dao.getTeam().getAll(self.get_competition())
             monClassement = Classement(teams)
-            for match in matchs:
-                team_dom = dao.getTeam().getById(match.idteam_home)
-                team_ext = dao.getTeam().getById(match.idteam_outside)
-                score_dom = 0
-                score_ext = 0
-                goals = dao.getGoals().getByMatch(match)
-                for goal in goals:
-                    if goal.idequipe == team_dom.id:
-                        score_dom += 1
-                    else:
-                        score_ext += 1
-                monClassement.add_score(team_dom, score_dom, score_ext, team_ext)
-                self.listWidget_matchslist.addItem('{} {} - {} {}'.format(team_dom.name, score_dom, score_ext, team_ext.name))
+            if matchs is not None:
+                for match in matchs:
+                    team_dom = dao.getTeam().getById(match.idteam_home)
+                    team_ext = dao.getTeam().getById(match.idteam_outside)
+                    score_dom = 0
+                    score_ext = 0
+                    goals = dao.getGoals().getByMatch(match)
+                    if goals is not None:
+                        for goal in goals:
+                            if goal.idequipe == team_dom.id:
+                                score_dom += 1
+                            else:
+                                score_ext += 1
+                        monClassement.add_score(team_dom, score_dom, score_ext, team_ext)
+                        self.listWidget_matchslist.addItem('{} {} - {} {}'.format(
+                            team_dom.name, score_dom, score_ext, team_ext.name))
             self.__update_result(monClassement)
 
     def __update_result(self, classement):
@@ -286,7 +298,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # action after selected player in the listwidget
     def __event_selected_player(self, index):
         # loading current player object
-        self.set_current_player(self.get_players()[index])
+        players = self.get_players()
+        if players is not None:
+            self.set_current_player(players[index])
 
     # ========================
     # === EVENT OF BUTTONS ===
@@ -369,8 +383,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # action after selected competition in open menu
     def __event_load_competition(self, p_index):
         # loading existing competition
-        self.set_competition(dao.getCompetition().getById(p_index))
-        if len(dao.getMatch().getAll(self.get_competition())) > 0:
+        compet = dao.getCompetition().getById(p_index)
+        self.set_competition(compet)
+        if dao.getMatch().getAll(self.get_competition()) is not None:
             print('la competition a déjà commencé')
             self.set_competition_begin(True)
 
