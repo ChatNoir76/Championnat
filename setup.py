@@ -20,7 +20,8 @@ setup(
     description="Gestion pour la création d'un championnat avec statistique",
     author='ChatNoir76',
     author_email='chatnoirvip@gmail.com',
-    url='https://github.com/ChatNoir76',
+    url='https://github.com/ChatNoir76/Championnat',
     options=dict(build_exe=buildOptions),
-    executables=executables
+    executables=executables,
+    python_requires='>=3.7'
 )
